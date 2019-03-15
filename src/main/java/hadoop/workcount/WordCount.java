@@ -15,7 +15,7 @@ import org.apache.hadoop.util.GenericOptionsParser;
 public class WordCount {
     public static void main(String[] args) throws Exception {
         //一个完整的操作就称为一个作业即Job
-        //假设现在文件保存在HDSF上的"/input/info.txt"上，而且最终的输出结果也将保存在HDSFh r "/out"目录中
+        //假设现在文件保存在HDSF上的"/input/info.txt"上，而且最终的输出结果也将保存在HDSF r "/out"目录中
         Configuration conf = new Configuration();
         //考虑到我们最终需要使用HDFS进行内容的处理操作，并且输入时不带有HDFS地址
         String[] argArray = new GenericOptionsParser(conf, args).getRemainingArgs();
