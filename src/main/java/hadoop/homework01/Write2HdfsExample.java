@@ -14,6 +14,20 @@ import java.nio.charset.StandardCharsets;
  * @Description
  */
 public class Write2HdfsExample {
+
+    private static void mkdirInHdfs(String path) throws Exception {
+        Configuration conf = new Configuration();
+        Path myPath = new Path(path);
+        System.out.println("Creating " + path + " on hdfs...");
+        try (FileSystem fs = myPath.getFileSystem(conf)) {
+            // First create a new directory with mkdirs
+            fs.mkdirs(myPath);
+            System.out.println("Create " + path + " on hdfs successfully.");
+        } catch (Exception e) {
+            System.out.println("Exception:" + e);
+        }
+    }
+
 	
 	private static void writeContent2HDFS(final String dirPath, final String fileName, final byte[] content) {
 		FileSystem fs = null;
@@ -57,10 +71,12 @@ public class Write2HdfsExample {
 	
 	public static void main(String[] args) {
 		try {
-			String path = "/data/test/";
-			String fileName = "1.txt";
-			String content = "hello world";
-			writeContent2HDFS(path, fileName, content.getBytes(StandardCharsets.UTF_8));
+            String dirPath = "/data/test/";
+            String fileName = "1.txt";
+            String content = "hello world";
+
+            mkdirInHdfs(dirPath);
+			writeContent2HDFS(dirPath, fileName, content.getBytes(StandardCharsets.UTF_8));
 		}
 		catch (Exception e) {
 			System.out.println("Exceptions:" + e);
