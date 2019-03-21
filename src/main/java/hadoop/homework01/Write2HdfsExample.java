@@ -1,10 +1,12 @@
 package hadoop.homework01;
 
+import hadoop.CommonUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -16,71 +18,55 @@ import java.nio.charset.StandardCharsets;
 public class Write2HdfsExample {
 
     private static void mkdirInHdfs(String path) throws Exception {
-        Configuration conf = new Configuration();
-        Path myPath = new Path(path);
-        System.out.println("Creating " + path + " on hdfs...");
-        try (FileSystem fs = myPath.getFileSystem(conf)) {
+        FileSystem fs = null;
+        try {
+            Configuration conf = new Configuration();
+            Path myPath = new Path(path);
+            fs = myPath.getFileSystem(conf);
+            System.out.println("Creating " + path + " on hdfs...");
+
             // First create a new directory with mkdirs
             fs.mkdirs(myPath);
             System.out.println("Create " + path + " on hdfs successfully.");
         } catch (Exception e) {
             System.out.println("Exception:" + e);
+        } finally {
+            CommonUtils.closeFileSystem(fs);
         }
     }
 
-	
-	private static void writeContent2HDFS(final String dirPath, final String fileName, final byte[] content) {
-		FileSystem fs = null;
-		FSDataOutputStream outputStream = null;
-		try {
-			Configuration configuration = new Configuration();
-			fs = FileSystem.get(configuration);
-			Path path = new Path(dirPath + Path.SEPARATOR + fileName);
-			
-			if (fs.exists(path)) {
-				fs.delete(path, true);
-			}
-			
-			outputStream = fs.create(path);
-			outputStream.write(content);
-			outputStream.flush();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (null != outputStream) {
-				try {
-					outputStream.close();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if (null != fs) {
-				try {
-					fs.close();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	public static void main(String[] args) {
-		try {
-            String dirPath = "/data/test/";
+
+    private static void writeContent2HDFS(final String dirPath, final String fileName, final byte[] content) {
+        FileSystem fs = null;
+        FSDataOutputStream outputStream = null;
+        try {
+            Configuration configuration = new Configuration();
+            fs = FileSystem.get(configuration);
+            Path path = new Path(dirPath + "/" + fileName);
+            System.out.println("separator:" + File.separator);
+
+            outputStream = fs.create(path);
+            outputStream.write(content);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            CommonUtils.closeOutputStream(outputStream);
+            CommonUtils.closeFileSystem(fs);
+        }
+    }
+
+
+    public static void main(String[] args) {
+        try {
+            String dirPath = "hdfs://localhost:9000/data/test/";
             String fileName = "1.txt";
             String content = "hello world";
-
-            mkdirInHdfs(dirPath);
-			writeContent2HDFS(dirPath, fileName, content.getBytes(StandardCharsets.UTF_8));
-		}
-		catch (Exception e) {
-			System.out.println("Exceptions:" + e);
-		}
-		System.out.println("timestamp:" + System.currentTimeMillis());
-	}
+            //mkdirInHdfs(dirPath);
+            writeContent2HDFS(dirPath, fileName, content.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            System.out.println("Exceptions:" + e);
+        }
+        System.out.println("timestamp:" + System.currentTimeMillis());
+    }
 }

@@ -1,8 +1,10 @@
 package hadoop.homework01;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import hadoop.CommonUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -22,11 +24,7 @@ public class ReadFromHdfsExample {
 		try {
 			Configuration configuration = new Configuration();
 			fs = FileSystem.get(configuration);
-			Path path = new Path(dirPath + Path.SEPARATOR + fileName);
-			
-			if (fs.exists(path)) {
-				fs.delete(path, true);
-			}
+			Path path = new Path(dirPath + File.separator + fileName);
 			
 			inputStream = fs.open(path);
 			byte[] content = new byte[inputStream.available()];
@@ -39,23 +37,8 @@ public class ReadFromHdfsExample {
 			e.printStackTrace();
 		}
 		finally {
-			if (null != inputStream) {
-				try {
-					inputStream.close();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if (null != fs) {
-				try {
-					fs.close();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			CommonUtils.closeInputStream(inputStream);
+			CommonUtils.closeFileSystem(fs);
 		}
 	}
 	
