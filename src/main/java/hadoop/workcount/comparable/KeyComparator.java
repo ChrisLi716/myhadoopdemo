@@ -18,9 +18,12 @@ public class KeyComparator implements WritableComparable<KeyComparator> {
 	
 	private String key;
 	
-	KeyComparator(String key)
+	private int value;
+	
+	KeyComparator(String key, int value)
 	{
 		this.key = key;
+		this.value = value;
 	}
 	
 	@Override
@@ -32,12 +35,14 @@ public class KeyComparator implements WritableComparable<KeyComparator> {
 	public void write(DataOutput out)
 		throws IOException {
 		out.writeBytes(key);
+		out.writeInt(value);
 	}
 	
 	@Override
 	public void readFields(DataInput in)
 		throws IOException {
 		key = in.readLine();
+		value = in.readInt();
 	}
 	
 	@Override
@@ -47,12 +52,11 @@ public class KeyComparator implements WritableComparable<KeyComparator> {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		KeyComparator that = (KeyComparator)o;
-		return Objects.equals(key, that.key);
+		return Objects.equals(key, that.key) && Objects.equals(value, that.value);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(key);
+		return Objects.hash(key, value);
 	}
-	
 }
