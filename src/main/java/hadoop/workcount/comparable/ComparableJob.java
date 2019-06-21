@@ -1,8 +1,5 @@
 package hadoop.workcount.comparable;
 
-import hadoop.workcount.WordCount;
-import hadoop.workcount.WordCountReducer;
-import hadoop.workcount.WorkCountMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -17,7 +14,7 @@ import org.apache.hadoop.util.GenericOptionsParser;
  * @Date 3/28/2019 16:56
  * @Description
  */
-public class MainJob {
+public class ComparableJob {
 	
 	public static void main(String[] args)
 		throws Exception {
@@ -28,12 +25,14 @@ public class MainJob {
 		String[] argArray = new GenericOptionsParser(conf, args).getRemainingArgs();
 		
 		Job job = Job.getInstance(conf, "ComparableJob");
-		job.setJarByClass(WordCount.class);
+		job.setJarByClass(ComparableJob.class);
 		
 		job.setMapperClass(ComparableMapper.class);
 		job.setMapOutputKeyClass(KeyComparator.class);
 		job.setMapOutputValueClass(IntWritable.class);
-		
+
+		job.setGroupingComparatorClass(GroupingComparator.class);
+
 		job.setReducerClass(ComparableReducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);

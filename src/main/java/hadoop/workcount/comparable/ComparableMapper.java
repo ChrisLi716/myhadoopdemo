@@ -17,8 +17,8 @@ public class ComparableMapper extends Mapper<Text, Text, KeyComparator, IntWrita
 		throws IOException, InterruptedException {
 		String line = value.toString();
 		String[] result = line.split(" ");
-		for (String s : result) {
-			context.write(new KeyComparator(s), new IntWritable(1));
+		for (String value : result) {
+			context.write(new KeyComparator(key, value), new IntWritable(1));
 		}
 		
 	}

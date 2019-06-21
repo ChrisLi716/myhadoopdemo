@@ -9,7 +9,6 @@ import org.apache.hadoop.fs.Path;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
 /**
  * @Auther Chris Lee
  * @Date 3/21/2019 11:05
@@ -21,6 +20,7 @@ public class Write2HdfsExample {
         FileSystem fs = null;
         try {
             Configuration conf = new Configuration();
+            conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
             Path myPath = new Path(path);
             fs = myPath.getFileSystem(conf);
             System.out.println("Creating " + path + " on hdfs...");
@@ -59,11 +59,12 @@ public class Write2HdfsExample {
 
     public static void main(String[] args) {
         try {
-            String dirPath = "hdfs://localhost:9000/data/test/";
+            System.setProperty("HADOOP_USER_NAME", "bigdata");
+            String dirPath = "hdfs://hadoop:9000/aa/test/";
             String fileName = "1.txt";
             String content = "hello world";
-            //mkdirInHdfs(dirPath);
-            writeContent2HDFS(dirPath, fileName, content.getBytes(StandardCharsets.UTF_8));
+            mkdirInHdfs(dirPath);
+            //writeContent2HDFS(dirPath, fileName, content.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             System.out.println("Exceptions:" + e);
         }
